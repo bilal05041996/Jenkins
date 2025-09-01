@@ -7,6 +7,10 @@ pipeline
                     image 'node:16-alpine'    // Use Node.js container
                }
         }
+     options
+        {
+            skipDefaultCheckout()
+        }
      stages
         {
             stage('Checkout Code')
