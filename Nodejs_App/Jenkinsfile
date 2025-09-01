@@ -1,57 +1,38 @@
-pipeline
-{
-     agent
-        {
-            docker
-               {
-                    image 'node:16-alpine'    // Use Node.js container
-               }
+pipeline {
+    agent {
+        docker {
+            image 'node:16-alpine'
         }
-     options
-        {
-            skipDefaultCheckout()
+    }
+    options {
+        skipDefaultCheckout()
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm  // This will now happen inside the container
+            }
         }
-     stages
-        {
-            stage('Checkout Code')
-               {
-                    steps
-                      {
-                           // Tell jenkins to use repo and branch already configured for this job
-                           checkout scm
-                      }
-               }
-            stage('Install dependencies')
-               {
-                    steps
-                     {
-                          // Install required packages from package.json file
-                          sh 'npm install'
-                     }
-               }
-            stage('Run tests')
-               {
-                   steps
-                    {
-                          // Run tests defined in package.json
-                          sh 'npm test'
-                    }
-               }
-            stage('Build Project')
-               {
-                   steps
-                    {
-                          // Build project (for example, create dist folder)
-                          sh 'npm run build'
-                    }
-               }
-            stage('Archive Artifacts') 
-               {
-                   steps
-                     {
-                          // Save the build output (dist folder) inside Jenkins
-                          archiveArtifacts artifacts: 'dist/**', fingerprint: true
-                     }
-               }
+        stage('Install dependencies') {
+            steps {
+                sh 'npm install'
+            }
         }
+        stage('Run tests') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Build Project') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+            }
+        }
+    }
 }
+
