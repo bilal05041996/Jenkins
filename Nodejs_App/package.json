@@ -1,0 +1,9 @@
+{
+	"name": "jenkins-demo",
+	"version": "1.0.0",
+	"scripts": 
+	{
+		"test": "echo 'Running test...' && exit 0",
+		"build": "echo 'Building app...' && mkdir -p dist && echo 'Hello Jenkins' > dist/index.html" 
+	}
+}
