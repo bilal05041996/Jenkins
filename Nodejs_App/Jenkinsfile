@@ -1,5 +1,5 @@
 pipeline {
-    agent none  // Disable top-level agent
+    agent none
 
     stages {
         stage('Checkout and Build') {
@@ -12,24 +12,19 @@ pipeline {
                 skipDefaultCheckout()
             }
             steps {
-                // Checkout inside the container
                 checkout scm
 
-                // Debug: show files
-                sh 'ls -la'
-
-                // Install dependencies
-                sh 'npm install'
-
-                // Run tests
-                sh 'npm test'
-
-                // Build project
-                sh 'npm run build'
+                // Navigate to correct folder
+                dir('Nodejs_App') {
+                    sh 'ls -la'           // Check files
+                    sh 'npm install'     // Install deps
+                    sh 'npm test'        // Run tests
+                    sh 'npm run build'   // Build
+                }
             }
             post {
                 success {
-                    archiveArtifacts artifacts: 'dist/**', fingerprint: true
+                    archiveArtifacts artifacts: 'Nodejs_App/dist/**', fingerprint: true
                 }
             }
         }
