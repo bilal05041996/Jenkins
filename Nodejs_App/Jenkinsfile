@@ -1,36 +1,36 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16-alpine'
-        }
-    }
-    options {
-        skipDefaultCheckout()
-    }
+    agent none  // Disable top-level agent
+
     stages {
-        stage('Checkout Code') {
-            steps {
-                checkout scm  // This will now happen inside the container
+        stage('Checkout and Build') {
+            agent {
+                docker {
+                    image 'node:16-alpine'
+                }
             }
-        }
-        stage('Install dependencies') {
+            options {
+                skipDefaultCheckout()
+            }
             steps {
+                // Checkout inside the container
+                checkout scm
+
+                // Debug: show files
+                sh 'ls -la'
+
+                // Install dependencies
                 sh 'npm install'
-            }
-        }
-        stage('Run tests') {
-            steps {
+
+                // Run tests
                 sh 'npm test'
-            }
-        }
-        stage('Build Project') {
-            steps {
+
+                // Build project
                 sh 'npm run build'
             }
-        }
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+            post {
+                success {
+                    archiveArtifacts artifacts: 'dist/**', fingerprint: true
+                }
             }
         }
     }
